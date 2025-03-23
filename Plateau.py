@@ -47,8 +47,47 @@ class Plateau:
         else:
             self.current_player = 1
 
+    def get_player_to_win(self):
+        for line in range(6):
+            for column in range(7):
+                if self.plateau[line][column] != 0:
+                    if column + 3 < 7 and all(
+                            self.plateau[line][column + i] == self.plateau[line][column] for i in range(4)):
+                        return self.plateau[line][column]
+
+                    if line + 3 < 6 and all(
+                            self.plateau[line + i][column] == self.plateau[line][column] for i in range(4)):
+                        return self.plateau[line][column]
+
+                    if line + 3 < 6 and column + 3 < 7 and all(
+                            self.plateau[line + i][column + i] == self.plateau[line][column] for i in range(4)):
+                        return self.plateau[line][column]
+
+                    if line - 3 >= 0 and column + 3 < 7 and all(
+                            self.plateau[line - i][column + i] == self.plateau[line][column] for i in range(4)):
+                        return self.plateau[line][column]
+        return 0
+
+    def check_win(self):
+        if self.get_player_to_win() == 1:
+            self.game_over = True
+            self.display_plateau()
+            print("Player wins!")
+
+        elif self.get_player_to_win() == -1:
+            self.game_over = True
+            self.display_plateau()
+            print("IA wins!")
+
+        elif not np.any(self.plateau == 0):
+            self.game_over = True
+            self.display_plateau()
+            print("The game is a draw because the board is full!")
+
+
     def start_game(self):
         while not self.game_over:
             self.display_plateau()
             self.player_action()
             self.switch_player()
+            self.check_win()
