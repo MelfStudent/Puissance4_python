@@ -51,3 +51,4 @@ class Plateau:
         while not self.game_over:
             self.display_plateau()
             self.player_action()
+            self.switch_player()
