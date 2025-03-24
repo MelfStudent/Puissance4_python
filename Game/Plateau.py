@@ -2,8 +2,8 @@ import random
 
 import numpy as np
 
-from IA import IA
-from Player import Player
+from Game.IA import IA
+from Game.Player import Player
 
 class Plateau:
     def __init__(self):
