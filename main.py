@@ -1,4 +1,4 @@
-from Plateau import Plateau
+from Game.Plateau import Plateau
 
 def main():
     try:
