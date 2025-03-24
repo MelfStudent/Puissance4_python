@@ -5,7 +5,7 @@ class IA:
     @staticmethod
     def ia_choice(plateau):
         print("AI is thinking")
-        time.sleep(random.uniform(2, 5))
+        time.sleep(random.uniform(1, 3))
         column = random.randint(0, 6)
         while plateau.plateau[0][column] != 0:
             column = random.randint(0, 6)
