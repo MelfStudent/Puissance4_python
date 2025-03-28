@@ -2,6 +2,7 @@ import random
 
 import numpy as np
 
+from Game.Database import Database
 from Game.IA import IA
 from Game.Player import Player
 
@@ -9,7 +10,12 @@ class Plateau:
     def __init__(self):
         self.plateau = np.zeros((6, 7), dtype=int)
         self.game_over = False
-        self.current_player = random.choice([1, 2])
+        self.current_player = [-1, 1][random.choice([0, 1])]
+        self.player_who_starts = self.current_player
+        self.shots_played_player = 0
+        self.shots_played_ia = 0
+        self.winner = 0
+        self.shots = []
 
     def display_plateau(self):
         player_color = "\033[93m●\033[0m"
@@ -38,12 +44,12 @@ class Plateau:
         if self.current_player == 1:
             Player.player_choice(self)
 
-        elif self.current_player == 2:
+        elif self.current_player == -1:
             IA.ia_choice(self)
 
     def switch_player(self):
         if self.current_player == 1:
-            self.current_player = 2
+            self.current_player = -1
         else:
             self.current_player = 1
 
@@ -72,11 +78,13 @@ class Plateau:
         if self.get_player_to_win() == 1:
             self.game_over = True
             self.display_plateau()
+            self.winner = 1
             print("Player wins!")
 
         elif self.get_player_to_win() == -1:
             self.game_over = True
             self.display_plateau()
+            self.winner = -1
             print("IA wins!")
 
         elif not np.any(self.plateau == 0):
@@ -84,6 +92,8 @@ class Plateau:
             self.display_plateau()
             print("The game is a draw because the board is full!")
 
+    def save_game(self):
+        Database.save_new_game(self.player_who_starts, self.winner, self.shots_played_player, self.shots_played_ia, self.shots)
 
     def start_game(self):
         while not self.game_over:
@@ -91,3 +101,5 @@ class Plateau:
             self.player_action()
             self.switch_player()
             self.check_win()
+
+        self.save_game()

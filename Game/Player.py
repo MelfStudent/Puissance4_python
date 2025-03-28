@@ -13,6 +13,8 @@ class Player:
                     for row in range(5, -1, -1):
                         if plateau.plateau[row][column] == 0:
                             plateau.plateau[row][column] = 1
+                            plateau.shots.append((row, column))
+                            plateau.shots_played_player += 1
                             return
             except ValueError:
                 print("Error: Please enter a valid number.")
