@@ -10,8 +10,8 @@ class Plateau:
     def __init__(self):
         self.plateau = np.zeros((6, 7), dtype=int)
         self.game_over = False
-        self.current_player = [-1, 1][random.choice([0, 1])]
-        self.player_who_starts = self.current_player
+        self.current_player = 0
+        self.player_who_starts = 0
         self.shots_played_player = 0
         self.shots_played_ia = 0
         self.winner = 0
@@ -95,7 +95,35 @@ class Plateau:
     def save_game(self):
         Database.save_new_game(self.player_who_starts, self.winner, self.shots_played_player, self.shots_played_ia, self.shots)
 
+    def player_choice_who_starts(self):
+        print("Player who starts!")
+        print("1. You")
+        print("2. IA")
+        print("3. Random")
+
+        while True:
+            try:
+                choice = int(input("Please enter your choice: "))
+                if choice == 1:
+                    self.player_who_starts = 1
+                    self.current_player = 1
+                    break
+                elif choice == 2:
+                    self.player_who_starts = -1
+                    self.current_player = -1
+                    break
+                elif choice == 3:
+                    self.player_who_starts = [-1, 1][random.choice([0, 1])]
+                    self.current_player = self.player_who_starts
+                    break
+                else:
+                    print("Error: Please enter a number between 1 and 2.")
+            except ValueError:
+                print("Please enter a number.")
+
     def start_game(self):
+        self.player_choice_who_starts()
+
         while not self.game_over:
             self.display_plateau()
             self.player_action()
