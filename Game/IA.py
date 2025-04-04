@@ -2,6 +2,12 @@ import random
 import time
 
 class IA:
+    """
+    Simulates the AI game by randomly placing a token
+
+    Parameters:
+        array: plateau | table containing the positions of the moves played such as (5, 1)
+    """
     @staticmethod
     def ia_choice(plateau):
         print("AI is thinking")

@@ -1,4 +1,10 @@
 class Player:
+    """
+    Asks the player to choose a column to place their token in, then the token is added to the game board
+
+    Parameters:
+        array: plateau | table containing the positions of the moves played such as (5, 1)
+    """
     @staticmethod
     def player_choice(plateau):
         while True:
