@@ -23,11 +23,11 @@ class Database:
     Saves a game to the game_data.csv file in the form (game id, date, starting player, winner, number of moves played by the player, number of moves played by the AI and moves played
     
     Parameters:
-    int: player_who_starts |    -1 when the AI starts and 1 when the player starts
-    int: winner |   -1 when the AI wins and 1 when the player wins
-    int: shots_played_player |  number of moves the player has to play
-    int: shots_played_ia |  number of moves the AI has to play
-    array: shots |  table containing the position of the moves played in the order of the game
+        int: player_who_starts |    -1 when the AI starts and 1 when the player starts
+        int: winner |   -1 when the AI wins and 1 when the player wins
+        int: shots_played_player |  number of moves the player has to play
+        int: shots_played_ia |  number of moves the AI has to play
+        array: shots |  table containing the position of the moves played in the order of the game
     """
     @staticmethod
     def save_new_game(player_who_starts:int, winner:int, shots_played_player:int, shots_played_ia:int, shots):
