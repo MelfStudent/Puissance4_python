@@ -5,6 +5,8 @@ import numpy as np
 from Game.Database import Database
 from Game.IA import IA
 from Game.Player import Player
+from Game.Utils import Utils
+
 
 class Plateau:
     def __init__(self):
@@ -63,43 +65,16 @@ class Plateau:
             self.current_player = 1
 
     """
-    Checks the game board for a winning condition.
-    
-    Returns:
-            int: 1 if the human player wins, -1 if the AI wins, 0 if no winner yet.
-    """
-    def get_player_to_win(self):
-        for line in range(6):
-            for column in range(7):
-                if self.plateau[line][column] != 0:
-                    if column + 3 < 7 and all(
-                            self.plateau[line][column + i] == self.plateau[line][column] for i in range(4)):
-                        return self.plateau[line][column]
-
-                    if line + 3 < 6 and all(
-                            self.plateau[line + i][column] == self.plateau[line][column] for i in range(4)):
-                        return self.plateau[line][column]
-
-                    if line + 3 < 6 and column + 3 < 7 and all(
-                            self.plateau[line + i][column + i] == self.plateau[line][column] for i in range(4)):
-                        return self.plateau[line][column]
-
-                    if line - 3 >= 0 and column + 3 < 7 and all(
-                            self.plateau[line - i][column + i] == self.plateau[line][column] for i in range(4)):
-                        return self.plateau[line][column]
-        return 0
-
-    """
     Checks if there is a winner or the game is a draw and updates the game state accordingly.
     """
     def check_win(self):
-        if self.get_player_to_win() == 1:
+        if Utils.get_player_to_win(self.plateau) == 1:
             self.game_over = True
             self.display_plateau()
             self.winner = 1
             print("Player wins!")
 
-        elif self.get_player_to_win() == -1:
+        elif Utils.get_player_to_win(self.plateau) == -1:
             self.game_over = True
             self.display_plateau()
             self.winner = -1
