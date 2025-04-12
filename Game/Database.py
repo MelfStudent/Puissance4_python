@@ -1,3 +1,4 @@
+import ast
 import csv
 import datetime
 
@@ -51,3 +52,43 @@ class Database:
         with open('Data/game_data.csv', 'a', newline='') as file:
             writer = csv.writer(file)
             writer.writerow([get_next_id, current_date, player_who_starts, winner, shots_played_player, shots_played_ia, shots])
+
+    @staticmethod
+    def evaluate_moves_from_history(current_shots, player_turn):
+        """Evaluates moves based on historical game data.
+
+        Args:
+            current_shots (list): The list of shots played in the current game.
+            player_turn (int): The current player's turn (1 for human, -1 for AI).
+
+        Returns:
+            dict: A dictionary with suggested moves and their scores based on historical data.
+        """
+        move_scores = {}
+
+        # Load historical game data
+        try:
+            with open('data/game_data.csv', 'r') as file:
+                reader = csv.reader(file)
+                for row in reader:
+                    _, _, _, winner, _, _, shots = row
+                    winner = int(winner)
+                    shots = ast.literal_eval(shots)  # Convert string representation of list to actual list
+
+                    # Check if the current game matches the start of a historical game
+                    if shots[:len(current_shots)] == current_shots:
+                        # Evaluate the next move in the historical game
+                        next_move = shots[len(current_shots)]
+                        if next_move not in move_scores:
+                            move_scores[next_move] = 0
+
+                        # Adjust score based on the outcome of the historical game
+                        if winner == player_turn:
+                            move_scores[next_move] += 20
+                        elif winner == -player_turn:
+                            move_scores[next_move] -= 15
+
+        except FileNotFoundError:
+            print("No historical game data found.")
+
+        return move_scores
