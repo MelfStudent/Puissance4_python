@@ -2,6 +2,7 @@ import random
 import time
 import numpy as np
 
+from Game.Database import Database
 from Game.Utils import Utils
 
 class IA:
@@ -76,6 +77,8 @@ class IA:
         player = 1
         ia = -1
 
+        historical_scores = Database.evaluate_moves_from_history(plateau_obj.shots, ia)
+
         for (row, col) in moves:
             simulated_board = np.copy(board)
             simulated_board[row][col] = ia
@@ -95,6 +98,10 @@ class IA:
             moves[(row, col)] += IA.count_alignment(board, row, col, player) * 5
 
             moves[(row, col)] += 6 - abs(3 - col)  # Higher score for columns closer to the center
+
+            # Add historical score if available
+            if (row, col) in historical_scores:
+                moves[(row, col)] += historical_scores[(row, col)]
 
         return moves
 
