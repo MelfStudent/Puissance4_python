@@ -1,15 +1,22 @@
 class Player:
-    """
-    Asks the player to choose a column to place their token in, then the token is added to the game board
+    """Class representing the human player.
 
-    Parameters:
-        array: plateau | table containing the positions of the moves played such as (5, 1)
+    This class provides a method for the human player to choose a column
+    to place their token on the game board.
     """
     @staticmethod
     def player_choice(plateau):
+        """Asks the player to choose a column to place their token in, then adds the token to the game board.
+
+        Prompts the player to enter a column number between 1 and 7. If the column is valid and not full,
+        the player's token is placed in the lowest available row of the chosen column.
+
+        Args:
+            plateau (Plateau): The game board instance containing the positions of the moves played.
+        """
         while True:
             try:
-                column = int(input("Choisissez une colonne (1-7) : ")) - 1
+                column = int(input("Choose a column (1-7): ")) - 1
 
                 if column < 0 or column > 6:
                     print("Error: Please enter a number between 1 and 7.")
