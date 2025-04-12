@@ -9,7 +9,13 @@ from Game.Utils import Utils
 
 
 class Plateau:
+    """Class representing the game board.
+
+    This class manages the game state, including the board, current player,
+    and game logic such as checking for wins and switching players.
+    """
     def __init__(self):
+        """Initializes the game board and game state."""
         self.plateau = np.zeros((6, 7), dtype=int)
         self.game_over = False
         self.current_player = 0
@@ -19,8 +25,7 @@ class Plateau:
         self.winner = 0
         self.shots = []
 
-    """
-    Displays the board in the console as a grid with colored tokens
+    """Displays the board in the console as a grid with colored tokens
     """
     def display_plateau(self):
         player_color = "\033[93m●\033[0m"
@@ -43,8 +48,7 @@ class Plateau:
 
         print(" ---------------\n")
 
-    """
-    Displays the player or AI index depending on who is playing, and calls their game function
+    """Displays the player or AI index depending on who is playing, and calls their game function
     """
     def player_action(self):
         print(f"Player {self.current_player}'s turn!")
@@ -55,8 +59,7 @@ class Plateau:
         elif self.current_player == -1:
             IA.ia_choice(self)
 
-    """
-    Toggles the player's hint to play based on the previous player
+    """Toggles the player's hint to play based on the previous player
     """
     def switch_player(self):
         if self.current_player == 1:
@@ -64,8 +67,7 @@ class Plateau:
         else:
             self.current_player = 1
 
-    """
-    Checks if there is a winner or the game is a draw and updates the game state accordingly.
+    """Checks if there is a winner or the game is a draw and updates the game state accordingly.
     """
     def check_win(self):
         if Utils.get_player_to_win(self.plateau) == 1:
@@ -85,14 +87,12 @@ class Plateau:
             self.display_plateau()
             print("The game is a draw because the board is full!")
 
-    """
-    Calls the save_new_game method of the Database class to save the current game state to a CSV file
+    """Calls the save_new_game method of the Database class to save the current game state to a CSV file
     """
     def save_game(self):
         Database.save_new_game(self.player_who_starts, self.winner, self.shots_played_player, self.shots_played_ia, self.shots)
 
-    """
-    Prompts the user to choose who starts the game between human, AI, or random
+    """Prompts the user to choose who starts the game between human, AI, or random
     """
     def player_choice_who_starts(self):
         print("Player who starts!")
@@ -120,8 +120,7 @@ class Plateau:
             except ValueError:
                 print("Please enter a number.")
 
-    """
-    Starts the game by initializing the starting player and managing the game loop until the game ends.
+    """Starts the game by initializing the starting player and managing the game loop until the game ends.
     """
     def start_game(self):
         self.player_choice_who_starts()
