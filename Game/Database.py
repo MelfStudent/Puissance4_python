@@ -2,6 +2,9 @@ import ast
 import csv
 import datetime
 
+from Game.Utils import Utils
+
+
 class Database:
     """Class for managing game data storage and retrieval.
 
@@ -64,6 +67,7 @@ class Database:
         Returns:
             dict: A dictionary with suggested moves and their scores based on historical data.
         """
+        points_config = Utils.load_points_config()
         move_scores = {}
 
         # Load historical game data
@@ -84,9 +88,9 @@ class Database:
 
                         # Adjust score based on the outcome of the historical game
                         if winner == player_turn:
-                            move_scores[next_move] += 20
+                            move_scores[next_move] += points_config["historical_win_score"]
                         elif winner == -player_turn:
-                            move_scores[next_move] -= 15
+                            move_scores[next_move] -= points_config["historical_loss_score"]
 
         except FileNotFoundError:
             print("No historical game data found.")
