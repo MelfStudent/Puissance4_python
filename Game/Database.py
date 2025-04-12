@@ -1,6 +1,9 @@
 import ast
 import csv
 import datetime
+import os
+
+import pandas as pd
 
 from Game.Utils import Utils
 
@@ -22,10 +25,9 @@ class Database:
             int: The number of games recorded in the game_data.csv file plus one.
         """
         try:
-            with open('data/game_data.csv', 'r') as file:
-                reader = csv.reader(file)
-                rows = list(reader)
-                return len(rows) + 1
+            df = pd.read_csv('data/game_data.csv')
+            print(len(df))
+            return len(df) + 1
         except FileNotFoundError:
             return 1
 
@@ -52,9 +54,22 @@ class Database:
         current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         get_next_id = Database.get_next_id()
 
-        with open('Data/game_data.csv', 'a', newline='') as file:
-            writer = csv.writer(file)
-            writer.writerow([get_next_id, current_date, player_who_starts, winner, shots_played_player, shots_played_ia, shots])
+        new_game_data = {
+            "id": [get_next_id],
+            "date": [current_date],
+            "player_who_starts": [player_who_starts],
+            "winner": [winner],
+            "shots_played_player": [shots_played_player],
+            "shots_played_ia": [shots_played_ia],
+            "shots": [shots]
+        }
+
+        df_new_game = pd.DataFrame(new_game_data)
+
+        file_exists = os.path.isfile('data/game_data.csv')
+
+        # Append to the existing CSV file
+        df_new_game.to_csv('data/game_data.csv', mode='a', header=not file_exists, index=False)
 
     @staticmethod
     def evaluate_moves_from_history(current_shots, player_turn):
@@ -72,25 +87,23 @@ class Database:
 
         # Load historical game data
         try:
-            with open('data/game_data.csv', 'r') as file:
-                reader = csv.reader(file)
-                for row in reader:
-                    _, _, _, winner, _, _, shots = row
-                    winner = int(winner)
-                    shots = ast.literal_eval(shots)  # Convert string representation of list to actual list
+            df = pd.read_csv('data/game_data.csv')
+            for index, row in df.iterrows():
+                winner = row['winner']
+                shots = eval(row['shots']) # Convert string representation of list to actual list
 
-                    # Check if the current game matches the start of a historical game
-                    if shots[:len(current_shots)] == current_shots:
-                        # Evaluate the next move in the historical game
-                        next_move = shots[len(current_shots)]
-                        if next_move not in move_scores:
-                            move_scores[next_move] = 0
+                # Check if the current game matches the start of a historical game
+                if shots[:len(current_shots)] == current_shots:
+                    # Evaluate the next move in the historical game
+                    next_move = shots[len(current_shots)]
+                    if next_move not in move_scores:
+                        move_scores[next_move] = 0
 
-                        # Adjust score based on the outcome of the historical game
-                        if winner == player_turn:
-                            move_scores[next_move] += points_config["historical_win_score"]
-                        elif winner == -player_turn:
-                            move_scores[next_move] -= points_config["historical_loss_score"]
+                    # Adjust score based on the outcome of the historical game
+                    if winner == player_turn:
+                        move_scores[next_move] += points_config["historical_win_score"]
+                    elif winner == -player_turn:
+                        move_scores[next_move] -= points_config["historical_loss_score"]
 
         except FileNotFoundError:
             print("No historical game data found.")
