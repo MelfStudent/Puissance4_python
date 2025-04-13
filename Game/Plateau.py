@@ -3,10 +3,10 @@ import random
 import numpy as np
 
 from Game.Database import Database
+from Game.Graphics import Graphics
 from Game.IA import IA
 from Game.Player import Player
 from Game.Utils import Utils
-
 
 class Plateau:
     """Class representing the game board.
@@ -120,6 +120,14 @@ class Plateau:
             except ValueError:
                 print("Please enter a number.")
 
+    @staticmethod
+    def show_graphics():
+        """Displays all the graphics.
+        """
+        Graphics.plot_overview()
+        Graphics.plot_frequency_moves()
+        Graphics.plot_trend_dispersion()
+
     """Starts the game by initializing the starting player and managing the game loop until the game ends.
     """
     def start_game(self):
@@ -132,3 +140,4 @@ class Plateau:
             self.check_win()
 
         self.save_game()
+        self.show_graphics()
