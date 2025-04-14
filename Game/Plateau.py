@@ -1,3 +1,4 @@
+import os
 import random
 
 import numpy as np
@@ -136,6 +137,36 @@ class Plateau:
         print("2. Statistics panel")
         print("3. Quit the game")
 
+    def statistics_menu(self):
+        """Submenu for statistics panel with options
+        """
+        while True:
+            print("\n--- Statistics Panel ---")
+            print("1. Export game history to CSV")
+            print("2. Show graphs")
+            print("3. Back to main menu")
+
+            choice = input("Your choice: ").strip()
+
+            if choice == '1':
+                filename_input = input(
+                    "Enter a name for the exported file (without .csv), or press Enter for default: ").strip()
+
+                if filename_input == "":
+                    export_filename = "~/Downloads/exported_game_data.csv"
+                else:
+                    if filename_input.endswith(".csv"):
+                        filename_input = filename_input[:-4]
+                    export_filename = f"~/Downloads/{filename_input}.csv"
+
+                Database.export_game_data(export_filename)
+            elif choice == '2':
+                self.show_graphics()
+            elif choice == '3':
+                break
+            else:
+                print("Invalid choice. Please select 1, 2 or 3.")
+
     def welcome_menu(self):
         """Main welcome menu
         """
@@ -146,7 +177,7 @@ class Plateau:
             if choice == '1':
                 self.start_game()
             elif choice == '2':
-                pass
+                self.statistics_menu()
             elif choice == '3':
                 print("Goodbye and see you soon!")
                 exit()

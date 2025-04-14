@@ -109,3 +109,29 @@ class Database:
             print("No historical game data found.")
 
         return move_scores
+
+    @staticmethod
+    def export_game_data(base_path="~/Downloads/exported_game_data.csv"):
+        """Exports the game data to a specified CSV file, auto-incrementing the name if file exists
+        """
+        try:
+            df = pd.read_csv('data/game_data.csv')
+        except FileNotFoundError:
+            print("No game data found to export.")
+            return
+
+        base_path = os.path.expanduser(base_path)
+        folder, filename = os.path.split(base_path)
+        name, ext = os.path.splitext(filename)
+
+        counter = 1
+        final_path = os.path.join(folder, filename)
+        while os.path.exists(final_path):
+            final_path = os.path.join(folder, f"{name}_{counter:02d}{ext}")
+            counter += 1
+
+        try:
+            df.to_csv(final_path, index=False)
+            print(f"Game data exported to: {final_path}")
+        except Exception as e:
+            print(f"Failed to export game data: {e}")
