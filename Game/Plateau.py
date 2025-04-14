@@ -128,6 +128,31 @@ class Plateau:
         Graphics.plot_frequency_moves()
         Graphics.plot_trend_dispersion()
 
+    @staticmethod
+    def welcome_menu_options():
+        """Display the welcome menu options
+        """
+        print("1. Start a new game")
+        print("2. Statistics panel")
+        print("3. Quit the game")
+
+    def welcome_menu(self):
+        """Main welcome menu
+        """
+        while True:
+            self.welcome_menu_options()
+            choice = input("Your choice:")
+
+            if choice == '1':
+                self.start_game()
+            elif choice == '2':
+                pass
+            elif choice == '3':
+                print("Goodbye and see you soon!")
+                exit()
+            else:
+                print("Invalid choice. Please try again.")
+
     """Starts the game by initializing the starting player and managing the game loop until the game ends.
     """
     def start_game(self):
