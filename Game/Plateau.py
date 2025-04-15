@@ -59,7 +59,8 @@ class Plateau:
     """Displays the player or AI index depending on who is playing, and calls their game function
     """
     def player_action(self):
-        print(f"Player {self.current_player}'s turn!")
+        current_player_str = "Player" if self.current_player == 1 else "IA"
+        print(f"{current_player_str} turn!")
 
         if self.current_player == 1:
             Player.player_choice(self)
