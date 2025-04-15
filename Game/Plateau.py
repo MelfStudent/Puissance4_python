@@ -1,10 +1,14 @@
 import ast
+import os
+from pathlib import Path
+
 import seaborn as sns
 import random
 
 import numpy as np
 import pandas as pd
 from matplotlib import pyplot as plt, gridspec
+from matplotlib.backends.backend_pdf import PdfPages
 
 from Game.Database import Database
 from Game.Graphics import Graphics
@@ -315,6 +319,120 @@ class Plateau:
         fig.suptitle("Game Statistics Dashboard", fontsize=16, fontweight='bold')
         plt.show()
 
+    @staticmethod
+    def generate_pdf_report():
+        df = Plateau.load_data()
+        if df is None:
+            print("No game data found.")
+            return
+
+        stats = Plateau.compute_all_stats(df)
+        filepath = Plateau.get_report_filepath()
+
+        with PdfPages(filepath) as pdf:
+            fig, axes = Plateau.create_fig_with_axes()
+            Plateau.plot_all_charts(df, stats, axes)
+            Plateau.add_summary_text(axes[-1], df, stats)
+            fig.suptitle("Connect Four - Game Statistics Report", fontsize=16, fontweight='bold')
+            pdf.savefig(fig)
+            plt.close()
+
+        print(f"\nPDF report saved to: {filepath}")
+
+    @staticmethod
+    def load_data():
+        try:
+            return pd.read_csv("data/game_data.csv")
+        except FileNotFoundError:
+            return None
+
+    @staticmethod
+    def compute_all_stats(df):
+        df = Plateau.prepare_data(df)
+        win_counts, win_percentages, starter_win_rate, avg_shots, all_coords = Plateau.compute_statistics(df)
+        return {
+            "win_counts": win_counts,
+            "win_percentages": win_percentages,
+            "starter_win_rate": starter_win_rate,
+            "avg_shots": avg_shots,
+            "all_coords": all_coords
+        }
+
+    @staticmethod
+    def get_report_filepath():
+        base_name = input("Enter report name (without .pdf): ").strip() or "game_analysis_report"
+        downloads_path = str(Path.home() / "Downloads")
+        counter = 1
+        filename = f"{base_name}.pdf"
+        filepath = os.path.join(downloads_path, filename)
+
+        while os.path.exists(filepath):
+            filename = f"{base_name}_{counter}.pdf"
+            filepath = os.path.join(downloads_path, filename)
+            counter += 1
+
+        return filepath
+
+    @staticmethod
+    def create_fig_with_axes():
+        fig = plt.figure(constrained_layout=True, figsize=(16, 10))
+        spec = gridspec.GridSpec(ncols=3, nrows=2, figure=fig)
+        axes = [fig.add_subplot(spec[i, j]) for i in range(2) for j in range(3)]
+        return fig, axes
+
+    @staticmethod
+    def plot_all_charts(df, stats, axes):
+        win_counts = stats["win_counts"]
+        all_coords = stats["all_coords"]
+
+        axes[0].bar(win_counts.index, win_counts.values, color=["#4caf50", "#f44336"])
+        axes[0].set_title("Number of Wins")
+        axes[0].set_ylabel("Games")
+        axes[0].set_xlabel("Winner")
+
+        df.set_index("date").resample("D")["is_win"].mean().plot(ax=axes[1], color="#2196f3")
+        axes[1].set_title("Player Win Rate Over Time")
+        axes[1].set_ylabel("Win Rate")
+
+        sns.boxplot(x="winner_str", y="total_shots", data=df, hue="winner_str", palette="Set2", ax=axes[2],
+                    legend=False)
+        axes[2].set_title("Number of Moves per Winner")
+        axes[2].set_xlabel("Winner")
+        axes[2].set_ylabel("Moves")
+
+        df["total_shots"].hist(bins=10, color="#9c27b0", ax=axes[3])
+        axes[3].set_title("Distribution of Total Moves")
+        axes[3].set_xlabel("Moves per Game")
+        axes[3].set_ylabel("Games")
+
+        if all_coords:
+            coords_df = pd.DataFrame(all_coords, columns=["row", "column"])
+            col_freq = coords_df["column"].value_counts().sort_index()
+            col_freq.plot(kind="bar", color="#ff9800", ax=axes[4])
+            axes[4].set_title("Most Played Columns")
+            axes[4].set_xlabel("Column (0 to 6)")
+            axes[4].set_ylabel("Total Moves")
+            axes[4].set_xticks(range(len(col_freq)))
+            axes[4].set_xticklabels([str(i) for i in col_freq.index], rotation=90)
+        else:
+            axes[4].text(0.5, 0.5, "No move data available", ha='center', va='center')
+            axes[4].set_title("Most Played Columns")
+            axes[4].axis("off")
+
+    @staticmethod
+    def add_summary_text(ax, df, stats):
+        ax.axis("off")
+        wc, wp = stats["win_counts"], stats["win_percentages"]
+        text = (
+            f"Game Analysis Summary\n\n"
+            f"Total Games: {len(df)}\n"
+            f"Player Wins: {wc.get('Player', 0)} ({wp.get('Player', 0)}%)\n"
+            f"IA Wins: {wc.get('IA', 0)} ({wp.get('IA', 0)}%)\n"
+            f"Starter Win Rate: {stats['starter_win_rate']:.2f}%\n"
+            f"Avg. Moves/Game: {stats['avg_shots']:.2f}\n\n"
+        )
+        ax.text(0, 1, text, fontsize=11, verticalalignment='top')
+
     def statistics_menu(self):
         """Submenu for statistics panel with options
         """
@@ -326,7 +444,8 @@ class Plateau:
             print("4. Show filtered game data in terminal")
             print("5. Show graphs")
             print("6. Data analysis")
-            print("7. Back to main menu")
+            print("7. Generate PDF report")
+            print("8. Back to main menu")
 
             choice = input("Your choice: ").strip()
 
@@ -358,6 +477,8 @@ class Plateau:
                     else:
                         print("Invalid option.")
             elif choice == '7':
+                Plateau.generate_pdf_report()
+            elif choice == '8':
                 break
             else:
                 print("Invalid choice. Please try again.")
