@@ -111,27 +111,88 @@ class Database:
         return move_scores
 
     @staticmethod
-    def export_game_data(base_path="~/Downloads/exported_game_data.csv"):
-        """Exports the game data to a specified CSV file, auto-incrementing the name if file exists
-        """
-        try:
-            df = pd.read_csv('data/game_data.csv')
-        except FileNotFoundError:
-            print("No game data found to export.")
+    def export_dataframe(df: pd.DataFrame, filename: str = "exported_game_data.csv"):
+        if df is None or df.empty:
+            print("No data to export.")
             return
 
-        base_path = os.path.expanduser(base_path)
-        folder, filename = os.path.split(base_path)
-        name, ext = os.path.splitext(filename)
+        downloads_dir = os.path.expanduser("~/Downloads")
+        os.makedirs(downloads_dir, exist_ok=True)
+
+        if not filename.endswith(".csv"):
+            filename += ".csv"
+
+        base_name, ext = os.path.splitext(filename)
+        final_path = os.path.join(downloads_dir, filename)
 
         counter = 1
-        final_path = os.path.join(folder, filename)
         while os.path.exists(final_path):
-            final_path = os.path.join(folder, f"{name}_{counter:02d}{ext}")
+            final_path = os.path.join(downloads_dir, f"{base_name}_{counter:02d}{ext}")
             counter += 1
 
         try:
             df.to_csv(final_path, index=False)
-            print(f"Game data exported to: {final_path}")
+            print(f"Data exported to: {final_path}")
         except Exception as e:
-            print(f"Failed to export game data: {e}")
+            print(f"Failed to export data: {e}")
+
+    @staticmethod
+    def select_columns(df: pd.DataFrame) -> pd.DataFrame:
+        print("\nChoose columns to include (comma-separated):")
+        for idx, col in enumerate(df.columns, 1):
+            print(f"{idx}. {col}")
+
+        selection = input("Your choice (e.g. 1,3,5): ").strip()
+        if not selection:
+            return df
+
+        try:
+            selected_indices = [int(i) - 1 for i in selection.split(",")]
+            selected_columns = [df.columns[i] for i in selected_indices if 0 <= i < len(df.columns)]
+            return df[selected_columns]
+        except (ValueError, IndexError):
+            print("Invalid input. Showing all columns.")
+            return df
+
+    @staticmethod
+    def filter_game_data():
+        print("\n-- Apply Filters --")
+
+        date_start = input("Start date (YYYY-MM-DD) or press Enter to skip: ").strip()
+        date_end = input("End date (YYYY-MM-DD) or press Enter to skip: ").strip()
+
+        print("Filter by who started the game?")
+        print("1. Player")
+        print("2. IA")
+        print("3. No filter")
+        starter_choice = input("Your choice: ").strip()
+
+        print("Filter by result?")
+        print("1. Player victory")
+        print("2. IA victory")
+        print("3. No filter")
+        result_choice = input("Your choice: ").strip()
+
+        try:
+            df = pd.read_csv("data/game_data.csv", parse_dates=["date"])
+
+            if date_start:
+                df = df[df["date"] >= pd.to_datetime(date_start)]
+            if date_end:
+                df = df[df["date"] <= pd.to_datetime(date_end)]
+
+            if starter_choice == "1":
+                df = df[df["player_who_starts"] == 1]
+            elif starter_choice == "2":
+                df = df[df["player_who_starts"] == -1]
+
+            if result_choice == "1":
+                df = df[df["winner"] == 1]
+            elif result_choice == "2":
+                df = df[df["winner"] == -1]
+
+            return df
+
+        except FileNotFoundError:
+            print("No game data found.")
+            return None

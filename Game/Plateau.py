@@ -2,6 +2,7 @@ import os
 import random
 
 import numpy as np
+import pandas as pd
 
 from Game.Database import Database
 from Game.Graphics import Graphics
@@ -137,35 +138,88 @@ class Plateau:
         print("2. Statistics panel")
         print("3. Quit the game")
 
+    @staticmethod
+    def handle_export():
+        try:
+            df = pd.read_csv("data/game_data.csv")
+        except FileNotFoundError:
+            print("No game data found.")
+            return
+
+        filename = input("Enter filename (leave empty for default): ").strip()
+        if not filename:
+            filename = "exported_game_data.csv"
+
+        Database.export_dataframe(df, filename)
+
+    @staticmethod
+    def handle_filtered_export():
+        df = Database.filter_game_data()
+        if df is None or df.empty:
+            print("\nNo filtered data to export.")
+            return
+
+        df = Database.select_columns(df)
+
+        filename = input("Enter filename for filtered export (leave empty for default): ").strip()
+        if not filename:
+            filename = "filtered_game_data.csv"
+
+        Database.export_dataframe(df, filename)
+
+    @staticmethod
+    def show_all_data_terminal():
+        try:
+            df = pd.read_csv("data/game_data.csv")
+            if df.empty:
+                print("\n⚠️ No game data available.")
+            else:
+                print("\n=== All Game Data ===")
+                print(df.to_string(index=False))
+        except FileNotFoundError:
+            print("No data file found.")
+
+    @staticmethod
+    def show_filtered_data_terminal():
+        df = Database.filter_game_data()
+        if df is None:
+            return
+        if df.empty:
+            print("\nNo matching data found.")
+            return
+
+        df = Database.select_columns(df)
+        print("\n=== Filtered Game Data ===")
+        print(df.to_string(index=False))
+
     def statistics_menu(self):
         """Submenu for statistics panel with options
         """
         while True:
             print("\n--- Statistics Panel ---")
-            print("1. Export game history to CSV")
-            print("2. Show graphs")
-            print("3. Back to main menu")
+            print("1. Export all game data to CSV")
+            print("2. Export filtered game data to CSV")
+            print("3. Show all game data in terminal")
+            print("4. Show filtered game data in terminal")
+            print("5. Show graphs")
+            print("6. Back to main menu")
 
             choice = input("Your choice: ").strip()
 
             if choice == '1':
-                filename_input = input(
-                    "Enter a name for the exported file (without .csv), or press Enter for default: ").strip()
-
-                if filename_input == "":
-                    export_filename = "~/Downloads/exported_game_data.csv"
-                else:
-                    if filename_input.endswith(".csv"):
-                        filename_input = filename_input[:-4]
-                    export_filename = f"~/Downloads/{filename_input}.csv"
-
-                Database.export_game_data(export_filename)
+                self.handle_export()
             elif choice == '2':
-                self.show_graphics()
+                self.handle_filtered_export()
             elif choice == '3':
+                self.show_all_data_terminal()
+            elif choice == '4':
+                self.show_filtered_data_terminal()
+            elif choice == '5':
+                self.show_graphics()
+            elif choice == '6':
                 break
             else:
-                print("Invalid choice. Please select 1, 2 or 3.")
+                print("Invalid choice. Please try again.")
 
     def welcome_menu(self):
         """Main welcome menu
