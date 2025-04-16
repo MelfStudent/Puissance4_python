@@ -236,3 +236,77 @@ class Database:
                 print("Invalid input. No sorting applied.")
 
         return df
+
+    @staticmethod
+    def delete_filtered_data():
+        df = Database.apply_filters()
+        if Database.display_data_to_delete(df):
+            confirm = input("\nAre you sure you want to delete these records? (yes/no): ").strip().lower()
+            if confirm == "yes":
+                Database.delete_and_update_indices(df)
+            else:
+                print("Deletion canceled.")
+
+    @staticmethod
+    def delete_and_update_indices(df):
+        original_df = pd.read_csv("data/game_data.csv")
+        original_df = original_df[~original_df.index.isin(df.index)]
+
+        original_df = original_df.reset_index(drop=True)
+        original_df["id"] = original_df.index + 1
+
+        original_df.to_csv("data/game_data.csv", index=False)
+        print("Data deleted successfully and indices updated.")
+
+    @staticmethod
+    def display_data_to_delete(df):
+        if df is None or df.empty:
+            print("No data matches the filters. Nothing to delete.")
+            return False
+
+        print("\nData to be deleted:")
+        print(df.to_string(index=False))
+        return True
+
+    @staticmethod
+    def apply_filters():
+        print("\n-- Apply Filters to Delete Data --")
+
+        date_start = input("Start date (YYYY-MM-DD) or press Enter to skip: ").strip()
+        date_end = input("End date (YYYY-MM-DD) or press Enter to skip: ").strip()
+
+        print("Filter by who started the game?")
+        print("1. Player")
+        print("2. IA")
+        print("3. No filter")
+        starter_choice = input("Your choice: ").strip()
+
+        print("Filter by result?")
+        print("1. Player victory")
+        print("2. IA victory")
+        print("3. No filter")
+        result_choice = input("Your choice: ").strip()
+
+        try:
+            df = pd.read_csv("data/game_data.csv", parse_dates=["date"])
+
+            if date_start:
+                df = df[df["date"] >= pd.to_datetime(date_start)]
+            if date_end:
+                df = df[df["date"] <= pd.to_datetime(date_end)]
+
+            if starter_choice == "1":
+                df = df[df["player_who_starts"] == 1]
+            elif starter_choice == "2":
+                df = df[df["player_who_starts"] == -1]
+
+            if result_choice == "1":
+                df = df[df["winner"] == 1]
+            elif result_choice == "2":
+                df = df[df["winner"] == -1]
+
+            return df
+
+        except FileNotFoundError:
+            print("No game data found.")
+            return None

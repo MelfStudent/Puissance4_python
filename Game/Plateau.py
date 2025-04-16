@@ -449,7 +449,8 @@ class Plateau:
             print("5. Show graphs")
             print("6. Data analysis")
             print("7. Generate PDF report")
-            print("8. Back to main menu")
+            print("8. Delete filtered data")
+            print("9. Back to main menu")
 
             choice = input("Your choice: ").strip()
 
@@ -483,6 +484,8 @@ class Plateau:
             elif choice == '7':
                 Plateau.generate_pdf_report()
             elif choice == '8':
+                Database.delete_filtered_data()
+            elif choice == '9':
                 break
             else:
                 print("Invalid choice. Please try again.")
