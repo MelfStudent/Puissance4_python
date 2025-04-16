@@ -2,6 +2,7 @@ import random
 import time
 import numpy as np
 
+from Game.Database import Database
 from Game.Utils import Utils
 
 class IA:
@@ -72,9 +73,13 @@ class IA:
         Returns:
             dict: The dictionary of possible moves with their updated scores.
         """
+        points_config = Utils.load_points_config()
+
         board = plateau_obj.plateau
         player = 1
         ia = -1
+
+        historical_scores = Database.evaluate_moves_from_history(plateau_obj.shots, ia)
 
         for (row, col) in moves:
             simulated_board = np.copy(board)
@@ -82,19 +87,23 @@ class IA:
 
             # Check if the move leads to a win for the AI
             if Utils.get_player_to_win(simulated_board) == ia:
-                moves[(row, col)] += 1000
+                moves[(row, col)] += points_config["immediate_win"]
                 continue
 
             simulated_board[row][col] = player
             # Check if the move blocks a win for the player
             if Utils.get_player_to_win(simulated_board) == player:
-                moves[(row, col)] += 900
+                moves[(row, col)] += points_config["block_opponent_win"]
 
             # Add points for potential alignments of the AI and the player
-            moves[(row, col)] += IA.count_alignment(board, row, col, ia) * 10
-            moves[(row, col)] += IA.count_alignment(board, row, col, player) * 5
+            moves[(row, col)] += IA.count_alignment(board, row, col, ia) * points_config["ai_alignment_score"]
+            moves[(row, col)] += IA.count_alignment(board, row, col, player) * points_config["player_alignment_score"]
 
-            moves[(row, col)] += 6 - abs(3 - col)  # Higher score for columns closer to the center
+            moves[(row, col)] += points_config["central_column_preference"] - abs(3 - col)  # Higher score for columns closer to the center
+
+            # Add historical score if available
+            if (row, col) in historical_scores:
+                moves[(row, col)] += historical_scores[(row, col)]
 
         return moves
 

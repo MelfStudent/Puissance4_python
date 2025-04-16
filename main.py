@@ -8,7 +8,7 @@ def main():
     """
     try:
         plateau = Plateau()
-        plateau.start_game()
+        plateau.welcome_menu()
     except KeyboardInterrupt:
         # Handle manual interruption (e.g., user pressing Ctrl+C)
         print("\n-----------------------------")
