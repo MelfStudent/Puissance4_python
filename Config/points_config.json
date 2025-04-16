@@ -5,5 +5,6 @@
     "player_alignment_score": 5,
     "central_column_preference": 6,
     "historical_win_score": 20,
-    "historical_loss_score": 15
+    "historical_loss_score": 15,
+    "avoid_giving_win": 500
 }
