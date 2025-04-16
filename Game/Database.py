@@ -196,3 +196,43 @@ class Database:
         except FileNotFoundError:
             print("No game data found.")
             return None
+
+    @staticmethod
+    def sort_game_data(df: pd.DataFrame) -> pd.DataFrame:
+        print("\nDo you want to sort the data?")
+        print("1. Yes")
+        print("2. No")
+        sort_choice = input("Your choice: ").strip()
+
+        if sort_choice == "1":
+            print("\nChoose the column to sort by:")
+            for idx, col in enumerate(df.columns, 1):
+                if col != "shots":
+                    print(f"{idx}. {col}")
+
+            column_choice = input("Your choice: ").strip()
+            try:
+                column_index = int(column_choice) - 1
+                if column_index < 0 or column_index >= len(df.columns):
+                    raise ValueError
+                column_name = df.columns[column_index]
+
+                if column_name == "shots":
+                    print("Sorting by 'shots' is not allowed.")
+                    return df
+
+                print("\nChoose the sort order:")
+                print("1. Ascending")
+                print("2. Descending")
+                order_choice = input("Your choice: ").strip()
+
+                if order_choice == "1":
+                    return df.sort_values(by=column_name, ascending=True)
+                elif order_choice == "2":
+                    return df.sort_values(by=column_name, ascending=False)
+                else:
+                    print("Invalid choice. No sorting applied.")
+            except (ValueError, IndexError):
+                print("Invalid input. No sorting applied.")
+
+        return df

@@ -167,6 +167,7 @@ class Plateau:
             return
 
         df = Database.select_columns(df)
+        df = Database.sort_game_data(df)
 
         filename = input("Enter filename for filtered export (leave empty for default): ").strip()
         if not filename:
@@ -196,6 +197,8 @@ class Plateau:
             return
 
         df = Database.select_columns(df)
+        df = Database.sort_game_data(df)
+
         print("\n=== Filtered Game Data ===")
         print(df.to_string(index=False))
 
