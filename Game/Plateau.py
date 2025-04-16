@@ -24,6 +24,19 @@ class Plateau:
     """
     def __init__(self):
         """Initializes the game board and game state."""
+        self.shots = None
+        self.winner = None
+        self.shots_played_ia = None
+        self.shots_played_player = None
+        self.player_who_starts = None
+        self.current_player = None
+        self.game_over = None
+        self.plateau = None
+        self.reset_game()
+
+    def reset_game(self):
+        """Resets the game state to initial values
+        """
         self.plateau = np.zeros((6, 7), dtype=int)
         self.game_over = False
         self.current_player = 0
@@ -510,6 +523,7 @@ class Plateau:
     """Starts the game by initializing the starting player and managing the game loop until the game ends.
     """
     def start_game(self):
+        self.reset_game()
         self.player_choice_who_starts()
 
         while not self.game_over:
