@@ -26,7 +26,6 @@ class Database:
         """
         try:
             df = pd.read_csv('data/game_data.csv')
-            print(len(df))
             return len(df) + 1
         except FileNotFoundError:
             return 1
