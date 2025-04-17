@@ -1,0 +1,10 @@
+{
+    "immediate_win": 1000,
+    "block_opponent_win": 900,
+    "ai_alignment_score": 10,
+    "player_alignment_score": 5,
+    "central_column_preference": 6,
+    "historical_win_score": 20,
+    "historical_loss_score": 15,
+    "avoid_giving_win": 500
+}

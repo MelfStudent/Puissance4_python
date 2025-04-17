@@ -1,3 +1,6 @@
+import json
+
+
 class Utils:
     """Utility class.
 
@@ -40,3 +43,9 @@ class Utils:
                             plateau[line - i][column + i] == plateau[line][column] for i in range(4)):
                         return plateau[line][column]
         return 0
+
+    @staticmethod
+    def load_points_config():
+        """Load the points configuration from a JSON file."""
+        with open('config/points_config.json', 'r') as json_file:
+            return json.load(json_file)
