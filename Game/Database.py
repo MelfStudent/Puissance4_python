@@ -1,6 +1,5 @@
 import datetime
 import os
-
 import pandas as pd
 
 from Game.Utils import Utils
@@ -23,8 +22,12 @@ class Database:
         """
         try:
             df = pd.read_csv('data/game_data.csv')
+            Database._validate_columns(df)
             return len(df) + 1
         except FileNotFoundError:
+            return 1
+        except (pd.errors.EmptyDataError, ValueError):
+            Database._recreate_csv_with_columns()
             return 1
 
     @staticmethod
@@ -84,6 +87,7 @@ class Database:
         # Load historical game data
         try:
             df = pd.read_csv('data/game_data.csv')
+            Database._validate_columns(df)
             for index, row in df.iterrows():
                 winner = row['winner']
                 shots = eval(row['shots']) # Convert string representation of list to actual list
@@ -103,8 +107,25 @@ class Database:
 
         except FileNotFoundError:
             print("No historical game data found.")
+        except (pd.errors.EmptyDataError, ValueError):
+            Database._recreate_csv_with_columns()
 
         return move_scores
+
+    @staticmethod
+    def _validate_columns(df):
+        """Validates that the DataFrame contains the required columns
+        """
+        required_columns = {"id", "date", "player_who_starts", "winner", "shots_played_player", "shots_played_ia", "shots"}
+        if not required_columns.issubset(df.columns):
+            raise ValueError("CSV file does not contain the required columns.")
+
+    @staticmethod
+    def _recreate_csv_with_columns():
+        """Recreates the CSV file with the required columns
+        """
+        empty_df = pd.DataFrame(columns=["id", "date", "player_who_starts", "winner", "shots_played_player", "shots_played_ia", "shots"])
+        empty_df.to_csv('data/game_data.csv', index=False)
 
     @staticmethod
     def export_dataframe(df: pd.DataFrame, filename: str = "exported_game_data.csv"):
@@ -190,6 +211,7 @@ class Database:
 
         try:
             df = pd.read_csv("data/game_data.csv", parse_dates=["date"])
+            Database._validate_columns(df)
 
             if date_start:
                 df = df[df["date"] >= pd.to_datetime(date_start)]
@@ -210,6 +232,9 @@ class Database:
 
         except FileNotFoundError:
             print("No game data found.")
+            return None
+        except (pd.errors.EmptyDataError, ValueError):
+            Database._recreate_csv_with_columns()
             return None
 
     @staticmethod
@@ -332,6 +357,7 @@ class Database:
 
         try:
             df = pd.read_csv("data/game_data.csv", parse_dates=["date"])
+            Database._validate_columns(df)
 
             if date_start:
                 df = df[df["date"] >= pd.to_datetime(date_start)]
@@ -352,4 +378,7 @@ class Database:
 
         except FileNotFoundError:
             print("No game data found.")
+            return None
+        except (pd.errors.EmptyDataError, ValueError):
+            Database._recreate_csv_with_columns()
             return None
