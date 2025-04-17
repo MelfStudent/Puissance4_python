@@ -495,12 +495,40 @@ class Plateau:
         filepath = Plateau.get_report_filepath()
 
         with PdfPages(filepath) as pdf:
-            fig, axes = Plateau.create_fig_with_axes()
-            Plateau.plot_all_charts(df, stats, axes)
-            Plateau.add_summary_text(axes[-1], df, stats)
-            fig.suptitle("Connect Four - Game Statistics Report", fontsize=16, fontweight='bold')
+            fig = plt.figure(constrained_layout=True, figsize=(16, 24))
+            spec = gridspec.GridSpec(ncols=2, nrows=5, figure=fig, height_ratios=[0.1, 1, 1, 1,1])
+
+            fig.suptitle("Connect Four - Game Statistics Report", fontsize=16, fontweight='bold',y=0.97)
+
+            # Plot Overview
+            ax1 = fig.add_subplot(spec[1, 0])
+            Graphics.plot_overview(ax=ax1)
+
+            # Plot Trend and Dispersion
+            ax2 = fig.add_subplot(spec[1, 1])
+            Graphics.plot_trend_dispersion(ax=ax2)
+
+            # Plot Wins by First Player
+            ax3 = fig.add_subplot(spec[2, 0])
+            Graphics.plot_wins_by_first_player(ax=ax3)
+
+            # Plot Column Play Counts
+            ax4 = fig.add_subplot(spec[2, 1])
+            Graphics.plot_column_play_counts(ax=ax4)
+
+            # Plot Games per Month
+            ax5 = fig.add_subplot(spec[3, 0])
+            Graphics.plot_games_per_month(ax=ax5)
+
+            # Plot Shots Frequency per Game
+            ax6 = fig.add_subplot(spec[3, 1])
+            Graphics.plot_shots_frequency_per_game(ax=ax6)
+
+            ax7 = fig.add_subplot(spec[4, :])
+            Plateau.add_summary_text(ax7, df, stats)
+
             pdf.savefig(fig)
-            plt.close()
+            plt.close(fig)
 
         print(f"\nPDF report saved to: {filepath}")
 

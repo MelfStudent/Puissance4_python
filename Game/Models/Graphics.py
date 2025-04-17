@@ -11,7 +11,7 @@ class Graphics:
     """Class for generating various graphs based on game data
     """
     @staticmethod
-    def plot_overview():
+    def plot_overview(ax=None):
         """Plot an overview of the game results (Player wins, AI wins, Draws)
         """
         df = Database.load_game_data()
@@ -28,14 +28,15 @@ class Graphics:
         colors = ['yellow', 'red', 'lightblue']
         explode = (0.1, 0.1, 0)
 
-        plt.figure(figsize=(8, 8))
-        plt.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
-        plt.axis('equal')
-        plt.title('Overview of Game Results')
-        plt.show()
+        if ax is None:
+            ax = plt.gca()
+
+        ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
+        ax.axis('equal')
+        ax.set_title('Overview of Game Results')
 
     @staticmethod
-    def plot_trend_dispersion():
+    def plot_trend_dispersion(ax=None):
         """Plot trend and dispersion measures (mean, median, standard deviation of moves)
         """
         df = Database.load_game_data()
@@ -48,19 +49,19 @@ class Graphics:
         median_moves = df['total_moves'].median()
         std_moves = df['total_moves'].std()
 
-        # Boxplot with mean and median
-        plt.figure(figsize=(10, 6))
-        plt.boxplot(df['total_moves'], vert=False, patch_artist=True, boxprops=dict(facecolor="lightblue"))
-        plt.axvline(mean_moves, color='r', linestyle='--', label=f'Mean: {mean_moves:.2f}')
-        plt.axvline(median_moves, color='g', linestyle='-', label=f'Median: {median_moves:.2f}')
-        plt.text(mean_moves, 1.1, f'Std: {std_moves:.2f}', color='b')
-        plt.xlabel('Number of Moves')
-        plt.title('Trend and Dispersion Measures')
-        plt.legend()
-        plt.show()
+        if ax is None:
+            ax = plt.gca()
+
+        ax.boxplot(df['total_moves'], vert=False, patch_artist=True, boxprops=dict(facecolor="lightblue"))
+        ax.axvline(mean_moves, color='r', linestyle='--', label=f'Mean: {mean_moves:.2f}')
+        ax.axvline(median_moves, color='g', linestyle='-', label=f'Median: {median_moves:.2f}')
+        ax.text(mean_moves, 1.1, f'Std: {std_moves:.2f}', color='b')
+        ax.set_xlabel('Number of Moves')
+        ax.set_title('Trend and Dispersion Measures')
+        ax.legend()
 
     @staticmethod
-    def plot_wins_by_first_player():
+    def plot_wins_by_first_player(ax=None):
         """Plot the number of victories depending on who starts the game (Player or AI)
         """
         df = Database.load_game_data()
@@ -78,16 +79,16 @@ class Graphics:
         labels = ['Player starts', 'AI starts']
         wins = [player_starts_player_wins, ai_starts_ai_wins]
 
-        # Bar chart representation
-        fig, ax = plt.subplots()
+        if ax is None:
+            ax = plt.gca()
+
         ax.bar(labels, wins, color=['blue', 'red'])
         ax.set_ylabel('Number of victories')
         ax.set_title('Victories depending on who starts')
         ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
-        plt.show()
 
     @staticmethod
-    def plot_column_play_counts():
+    def plot_column_play_counts(ax=None):
         """Plot the frequency of moves per column (1 to 7)
         """
         df = Database.load_game_data()
@@ -102,7 +103,7 @@ class Graphics:
                 parsed_shots = ast.literal_eval(shot)
                 if isinstance(parsed_shots, list):
                     for (_, col) in parsed_shots:
-                        all_columns.append(col +1)
+                        all_columns.append(col + 1)
             except:
                 continue
 
@@ -113,7 +114,9 @@ class Graphics:
         columns = list(range(1, 8))
         frequencies = [counts.get(c, 0) for c in columns]
 
-        fig, ax = plt.subplots()
+        if ax is None:
+            ax = plt.gca()
+
         ax.bar(columns, frequencies, color='orange')
         ax.set_xlabel('Column (1 to 7)')
         ax.set_ylabel('Number of times played')
@@ -121,10 +124,8 @@ class Graphics:
         ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
 
-        plt.show()
-
     @staticmethod
-    def plot_games_per_month():
+    def plot_games_per_month(ax=None):
         """Plot the number of games played per month
         """
         df = Database.load_game_data()
@@ -143,7 +144,9 @@ class Graphics:
         months = [str(m) for m in games_per_month.index]
         counts = games_per_month.values
 
-        fig, ax = plt.subplots()
+        if ax is None:
+            ax = plt.gca()
+
         ax.bar(months, counts, color='mediumseagreen')
         ax.set_xlabel('Month')
         ax.set_ylabel('Number of games')
@@ -151,10 +154,9 @@ class Graphics:
         ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         plt.xticks(rotation=45)
         plt.tight_layout()
-        plt.show()
 
     @staticmethod
-    def plot_shots_frequency_per_game():
+    def plot_shots_frequency_per_game(ax=None):
         """Plot the frequency of shots (total moves) per game
         """
         df = Database.load_game_data()
@@ -170,7 +172,9 @@ class Graphics:
         # Count the frequency of each total number of shots
         shot_counts = df['total_shots'].value_counts().sort_index()
 
-        fig, ax = plt.subplots()
+        if ax is None:
+            ax = plt.gca()
+
         ax.bar(shot_counts.index, shot_counts.values, color='cornflowerblue')
         ax.set_xlabel("Total number of moves in the game")
         ax.set_ylabel("Number of games")
@@ -178,4 +182,3 @@ class Graphics:
         ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         plt.tight_layout()
-        plt.show()
