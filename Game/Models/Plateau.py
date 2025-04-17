@@ -10,11 +10,12 @@ import pandas as pd
 from matplotlib import pyplot as plt, gridspec
 from matplotlib.backends.backend_pdf import PdfPages
 
-from Game.Database import Database
-from Game.Graphics import Graphics
-from Game.IA import IA
-from Game.Player import Player
-from Game.Utils import Utils
+from .Database import Database
+from .Graphics import Graphics
+from .IA import IA
+from .Player import Player
+from .Utils import Utils
+
 
 class Plateau:
     """Class representing the game board
@@ -241,7 +242,7 @@ class Plateau:
         """Exports all game data to a CSV file
         """
         try:
-            df = pd.read_csv("data/game_data.csv")
+            df = pd.read_csv("../data/game_data.csv")
         except FileNotFoundError:
             print("No game data found.")
             return
@@ -275,7 +276,7 @@ class Plateau:
         """Displays all game data in the terminal
         """
         try:
-            df = pd.read_csv("data/game_data.csv")
+            df = pd.read_csv("../data/game_data.csv")
             if df.empty:
                 print("\n⚠️ No game data available.")
             else:
@@ -359,7 +360,7 @@ class Plateau:
             mode (str): The mode in which to display the analysis results. Can be "graphic" or "terminal".
         """
         try:
-            df = pd.read_csv("data/game_data.csv")
+            df = pd.read_csv("../data/game_data.csv")
         except FileNotFoundError:
             print("No game data found.")
             return
@@ -508,7 +509,7 @@ class Plateau:
             pd.DataFrame: A DataFrame containing the game data.
         """
         try:
-            return pd.read_csv("data/game_data.csv")
+            return pd.read_csv("../data/game_data.csv")
         except FileNotFoundError:
             return None
 

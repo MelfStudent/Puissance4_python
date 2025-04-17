@@ -53,7 +53,7 @@ class Utils:
             dict: The points configuration loaded from the JSON file.
         """
         try:
-            with open('config/points_config.json', 'r') as json_file:
+            with open('../config/points_config.json', 'r') as json_file:
                 return json.load(json_file)
         except FileNotFoundError:
             print("Error: points_config.json file not found.")

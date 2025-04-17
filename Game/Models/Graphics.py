@@ -13,7 +13,7 @@ class Graphics:
             pd.DataFrame: A DataFrame containing the game data.
         """
         try:
-            return pd.read_csv('data/game_data.csv')
+            return pd.read_csv('../data/game_data.csv')
         except FileNotFoundError:
             print("No game data found.")
             return pd.DataFrame()

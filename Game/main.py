@@ -1,4 +1,4 @@
-from Game.Plateau import Plateau
+from Game import Plateau
 
 def main():
     """Main function to start.

@@ -2,8 +2,8 @@ import random
 import time
 import numpy as np
 
-from Game.Database import Database
-from Game.Utils import Utils
+from .Database import Database
+from .Utils import Utils
 
 class IA:
     """Class representing the artificial intelligence
