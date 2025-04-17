@@ -226,8 +226,11 @@ class Plateau:
         """Displays all the graphics
         """
         Graphics.plot_overview()
-        Graphics.plot_frequency_moves()
         Graphics.plot_trend_dispersion()
+        Graphics.plot_wins_by_first_player()
+        Graphics.plot_column_play_counts()
+        Graphics.plot_games_per_month()
+        Graphics.plot_shots_frequency_per_game()
 
     @staticmethod
     def welcome_menu_options():
