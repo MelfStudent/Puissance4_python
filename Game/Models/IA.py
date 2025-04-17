@@ -103,16 +103,6 @@ class IA:
             if Utils.get_player_to_win(simulated_board) == player:
                 moves[(row, col)] += points_config["block_opponent_win"]
 
-            # Check if the move gives the player a win on the next turn
-            for next_col in range(7):
-                for next_row in range(5, -1, -1):
-                    if simulated_board[next_row][next_col] == 0:
-                        simulated_board[next_row][next_col] = player
-                        if Utils.get_player_to_win(simulated_board) == player:
-                            moves[(row, col)] -= points_config["avoid_giving_win"]
-                        simulated_board[next_row][next_col] = 0  # Reset the simulated move
-                        break
-
             # Add points for potential alignments of the AI and the player
             moves[(row, col)] += IA.count_alignment(board, row, col, ia) * points_config["ai_alignment_score"]
             moves[(row, col)] += IA.count_alignment(board, row, col, player) * points_config["player_alignment_score"]
