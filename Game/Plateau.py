@@ -25,27 +25,107 @@ class Plateau:
     def __init__(self):
         """Initializes the game board and game state
         """
-        self.shots = None
-        self.winner = None
-        self.shots_played_ia = None
-        self.shots_played_player = None
-        self.player_who_starts = None
-        self.current_player = None
-        self.game_over = None
-        self.plateau = None
-        self.reset_game()
+        self._shots = None
+        self._winner = None
+        self._shots_played_ia = None
+        self._shots_played_player = None
+        self._player_who_starts = None
+        self._current_player = None
+        self._game_over = None
+        self._plateau = None
+        self._reset_game()
 
-    def reset_game(self):
+    def _reset_game(self):
         """Resets the game state to initial values
         """
-        self.plateau = np.zeros((6, 7), dtype=int)
-        self.game_over = False
-        self.current_player = 0
-        self.player_who_starts = 0
-        self.shots_played_player = 0
-        self.shots_played_ia = 0
-        self.winner = 0
-        self.shots = []
+        self._plateau = np.zeros((6, 7), dtype=int)
+        self._game_over = False
+        self._current_player = 0
+        self._player_who_starts = 0
+        self._shots_played_player = 0
+        self._shots_played_ia = 0
+        self._winner = 0
+        self._shots = []
+
+    def get_plateau(self):
+        """Getter for the game board
+        """
+        return self._plateau
+
+    def set_plateau(self, plateau):
+        """Setter for the game board
+        """
+        self._plateau = plateau
+
+    def get_shots(self):
+        """Getter for the list of shots played
+        """
+        return self._shots
+
+    def set_shots(self, shots):
+        """Setter for the list of shots played
+        """
+        self._shots = shots
+
+    def get_shots_played_ia(self):
+        """Getter for the number of shots played by the AI
+        """
+        return self._shots_played_ia
+
+    def set_shots_played_ia(self, shots_played_ia):
+        """Setter for the number of shots played by the AI
+        """
+        self._shots_played_ia = shots_played_ia
+
+    def get_shots_played_player(self):
+        """Getter for the number of shots played by the player
+        """
+        return self._shots_played_player
+
+    def set_shots_played_player(self, shots_played_player):
+        """Setter for the number of shots played by the player
+        """
+        self._shots_played_player = shots_played_player
+
+    def get_player_who_starts(self):
+        """Getter for the player who starts the game
+        """
+        return self._player_who_starts
+
+    def set_player_who_starts(self, player_who_starts):
+        """Setter for the player who starts the game
+        """
+        self._player_who_starts = player_who_starts
+
+    def get_current_player(self):
+        """Getter for the current player
+        """
+        return self._current_player
+
+    def set_current_player(self, current_player):
+        """Setter for the current player
+        """
+        self._current_player = current_player
+
+    def get_game_over(self):
+        """Getter for the game over status
+        """
+        return self._game_over
+
+    def set_game_over(self, game_over):
+        """Setter for the game over status
+        """
+        self._game_over = game_over
+
+    def get_winner(self):
+        """Getter for the winner of the game
+        """
+        return self._winner
+
+    def set_winner(self, winner):
+        """Setter for the winner of the game
+        """
+        self._winner = winner
 
     def display_plateau(self):
         """Displays the board in the console as a grid with colored tokens
@@ -57,7 +137,7 @@ class Plateau:
         print("\n  1 2 3 4 5 6 7")
         print(" ---------------")
 
-        for row in self.plateau:
+        for row in self.get_plateau():
             print("|", end=" ")
             for cell in row:
                 if cell == 1:
@@ -73,44 +153,44 @@ class Plateau:
     def player_action(self):
         """Displays the player or AI index depending on who is playing, and calls their game function
         """
-        current_player_str = "Player" if self.current_player == 1 else "IA"
+        current_player_str = "Player" if self.get_current_player() == 1 else "IA"
         print(f"{current_player_str} turn!")
 
-        if self.current_player == 1:
+        if self.get_current_player() == 1:
             Player.player_choice(self)
 
-        elif self.current_player == -1:
+        elif self.get_current_player() == -1:
             IA.ia_choice(self)
 
     def switch_player(self):
         """Toggles the player's hint to play based on the previous player
         """
-        self.current_player = -1 if self.current_player == 1 else 1
+        self.set_current_player(-1 if self.get_current_player() == 1 else 1)
 
     def check_win(self):
         """Checks if there is a winner or the game is a draw and updates the game state accordingly.
         """
-        if Utils.get_player_to_win(self.plateau) == 1:
-            self.game_over = True
+        if Utils.get_player_to_win(self.get_plateau()) == 1:
+            self.set_game_over(True)
             self.display_plateau()
-            self.winner = 1
+            self.set_winner(1)
             print("Player wins!")
 
-        elif Utils.get_player_to_win(self.plateau) == -1:
-            self.game_over = True
+        elif Utils.get_player_to_win(self.get_plateau()) == -1:
+            self.set_game_over(True)
             self.display_plateau()
-            self.winner = -1
+            self.set_winner(-1)
             print("IA wins!")
 
-        elif not np.any(self.plateau == 0):
-            self.game_over = True
+        elif not np.any(self.get_plateau() == 0):
+            self.set_game_over(True)
             self.display_plateau()
             print("The game is a draw because the board is full!")
 
     def save_game(self):
         """Calls the save_new_game method of the Database class to save the current game state to a CSV file
         """
-        Database.save_new_game(self.player_who_starts, self.winner, self.shots_played_player, self.shots_played_ia, self.shots)
+        Database.save_new_game(self.get_player_who_starts(), self.get_winner(), self.get_shots_played_player(), self.get_shots_played_ia(), self.get_shots())
 
     def player_choice_who_starts(self):
         """Prompts the user to choose who starts the game between human, AI, or random
@@ -124,16 +204,16 @@ class Plateau:
             try:
                 choice = int(input("Please enter your choice: "))
                 if choice == 1:
-                    self.player_who_starts = 1
-                    self.current_player = 1
+                    self.set_player_who_starts(1)
+                    self.set_current_player(1)
                     break
                 elif choice == 2:
-                    self.player_who_starts = -1
-                    self.current_player = -1
+                    self.set_player_who_starts(-1)
+                    self.set_current_player(-1)
                     break
                 elif choice == 3:
-                    self.player_who_starts = [-1, 1][random.choice([0, 1])]
-                    self.current_player = self.player_who_starts
+                    self.set_player_who_starts([-1, 1][random.choice([0, 1])])
+                    self.set_current_player(self.get_player_who_starts())
                     break
                 else:
                     print("Error: Please enter a number between 1 and 2.")
@@ -629,14 +709,13 @@ class Plateau:
     def start_game(self):
         """Starts the game by initializing the starting player and managing the game loop until the game ends
         """
-        self.reset_game()
+        self._reset_game()
         self.player_choice_who_starts()
 
-        while not self.game_over:
+        while not self.get_game_over():
             self.display_plateau()
             self.player_action()
             self.switch_player()
             self.check_win()
 
         self.save_game()
-        self.show_graphics()

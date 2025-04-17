@@ -33,9 +33,17 @@ class IA:
         best_move = max(evaluated_moves, key=evaluated_moves.get)
         row, col = best_move
 
-        plateau.plateau[row][col] = -1  # Place the AI's token on the board
-        plateau.shots.append((row, col))  # Add the move to the list of played shots
-        plateau.shots_played_ia += 1
+        # Place the AI's token on the board
+        board = plateau.get_plateau()
+        board[row][col] = -1
+        plateau.set_plateau(board)
+
+        # Add the move to the list of played shots
+        shots = plateau.get_shots()
+        shots.append((row, col))
+        plateau.set_shots(shots)
+
+        plateau.set_shots_played_ia(plateau.get_shots_played_ia() + 1)
 
         print(f"AI played at column {col + 1}")
 
@@ -54,7 +62,7 @@ class IA:
         possible_moves = {}
         for col in range(7):
             for row in range(5, -1, -1):
-                if plateau.plateau[row][col] == 0:
+                if plateau.get_plateau()[row][col] == 0:
                     possible_moves[(row, col)] = 0  # Initialisation à 0
                     break
         return possible_moves
@@ -75,11 +83,11 @@ class IA:
         """
         points_config = Utils.load_points_config()
 
-        board = plateau_obj.plateau
+        board = plateau_obj.get_plateau()
         player = 1
         ia = -1
 
-        historical_scores = Database.evaluate_moves_from_history(plateau_obj.shots, ia)
+        historical_scores = Database.evaluate_moves_from_history(plateau_obj.get_shots(), ia)
 
         for (row, col) in moves:
             simulated_board = np.copy(board)

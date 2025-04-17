@@ -52,5 +52,12 @@ class Utils:
         Returns:
             dict: The points configuration loaded from the JSON file.
         """
-        with open('config/points_config.json', 'r') as json_file:
-            return json.load(json_file)
+        try:
+            with open('config/points_config.json', 'r') as json_file:
+                return json.load(json_file)
+        except FileNotFoundError:
+            print("Error: points_config.json file not found.")
+            return {}
+        except json.JSONDecodeError:
+            print("Error: Failed to decode JSON from points_config.json.")
+            return {}
