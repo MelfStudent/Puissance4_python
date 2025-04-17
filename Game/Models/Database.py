@@ -382,3 +382,16 @@ class Database:
         except (pd.errors.EmptyDataError, ValueError):
             Database._recreate_csv_with_columns()
             return None
+
+    @staticmethod
+    def load_game_data():
+        """Loads game data from the CSV file
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the game data.
+        """
+        try:
+            return pd.read_csv('../data/game_data.csv')
+        except FileNotFoundError:
+            print("No game data found.")
+            return pd.DataFrame()
