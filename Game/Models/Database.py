@@ -2,7 +2,7 @@ import datetime
 import os
 import pandas as pd
 
-from Game.Utils import Utils
+from .Utils import Utils
 
 class Database:
     """Class for managing game data storage and retrieval
@@ -21,7 +21,7 @@ class Database:
             int: The number of games recorded in the game_data.csv file plus one.
         """
         try:
-            df = pd.read_csv('data/game_data.csv')
+            df = pd.read_csv('../data/game_data.csv')
             Database._validate_columns(df)
             return len(df) + 1
         except FileNotFoundError:
@@ -31,7 +31,7 @@ class Database:
             return 1
 
     @staticmethod
-    def save_new_game(player_who_starts:int, winner:int, shots_played_player:int, shots_played_ia:int, shots):
+    def save_new_game(player_who_starts: int, winner: int, shots_played_player: int, shots_played_ia: int, shots):
         """Saves a game to the game_data.csv file
 
         Appends a new game record to 'Data/game_data.csv' with the following details:
@@ -51,10 +51,10 @@ class Database:
             shots (list): List containing the positions of the moves played in the order of the game.
         """
         current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        get_next_id = Database.get_next_id()
+        next_id = Database.get_next_id()
 
         new_game_data = {
-            "id": [get_next_id],
+            "id": [next_id],
             "date": [current_date],
             "player_who_starts": [player_who_starts],
             "winner": [winner],
@@ -65,10 +65,10 @@ class Database:
 
         df_new_game = pd.DataFrame(new_game_data)
 
-        file_exists = os.path.isfile('data/game_data.csv')
+        file_exists = os.path.isfile('../data/game_data.csv')
 
         # Append to the existing CSV file
-        df_new_game.to_csv('data/game_data.csv', mode='a', header=not file_exists, index=False)
+        df_new_game.to_csv('../data/game_data.csv', mode='a', header=not file_exists, index=False)
 
     @staticmethod
     def evaluate_moves_from_history(current_shots, player_turn):
@@ -86,9 +86,9 @@ class Database:
 
         # Load historical game data
         try:
-            df = pd.read_csv('data/game_data.csv')
+            df = pd.read_csv('../data/game_data.csv')
             Database._validate_columns(df)
-            for index, row in df.iterrows():
+            for _, row in df.iterrows():
                 winner = row['winner']
                 shots = eval(row['shots']) # Convert string representation of list to actual list
 
@@ -116,8 +116,8 @@ class Database:
     def _validate_columns(df):
         """Validates that the DataFrame contains the required columns
         """
-        required_columns = {"id", "date", "player_who_starts", "winner", "shots_played_player", "shots_played_ia", "shots"}
-        if not required_columns.issubset(df.columns):
+        REQUIRED_COLUMNS = {"id", "date", "player_who_starts", "winner", "shots_played_player", "shots_played_ia", "shots"}
+        if not REQUIRED_COLUMNS.issubset(df.columns):
             raise ValueError("CSV file does not contain the required columns.")
 
     @staticmethod
@@ -125,7 +125,7 @@ class Database:
         """Recreates the CSV file with the required columns
         """
         empty_df = pd.DataFrame(columns=["id", "date", "player_who_starts", "winner", "shots_played_player", "shots_played_ia", "shots"])
-        empty_df.to_csv('data/game_data.csv', index=False)
+        empty_df.to_csv('../data/game_data.csv', index=False)
 
     @staticmethod
     def export_dataframe(df: pd.DataFrame, filename: str = "exported_game_data.csv"):
@@ -210,7 +210,7 @@ class Database:
         result_choice = input("Your choice: ").strip()
 
         try:
-            df = pd.read_csv("data/game_data.csv", parse_dates=["date"])
+            df = pd.read_csv("../data/game_data.csv", parse_dates=["date"])
             Database._validate_columns(df)
 
             if date_start:
@@ -304,13 +304,13 @@ class Database:
         Args:
             df (pd.DataFrame): The DataFrame containing the records to delete.
         """
-        original_df = pd.read_csv("data/game_data.csv")
+        original_df = pd.read_csv("../data/game_data.csv")
         original_df = original_df[~original_df.index.isin(df.index)]
 
         original_df = original_df.reset_index(drop=True)
         original_df["id"] = original_df.index + 1
 
-        original_df.to_csv("data/game_data.csv", index=False)
+        original_df.to_csv("../data/game_data.csv", index=False)
         print("Data deleted successfully and indices updated.")
 
     @staticmethod
@@ -356,7 +356,7 @@ class Database:
         result_choice = input("Your choice: ").strip()
 
         try:
-            df = pd.read_csv("data/game_data.csv", parse_dates=["date"])
+            df = pd.read_csv("../data/game_data.csv", parse_dates=["date"])
             Database._validate_columns(df)
 
             if date_start:
@@ -382,3 +382,16 @@ class Database:
         except (pd.errors.EmptyDataError, ValueError):
             Database._recreate_csv_with_columns()
             return None
+
+    @staticmethod
+    def load_game_data():
+        """Loads game data from the CSV file
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the game data.
+        """
+        try:
+            return pd.read_csv('../data/game_data.csv')
+        except FileNotFoundError:
+            print("No game data found.")
+            return pd.DataFrame()
