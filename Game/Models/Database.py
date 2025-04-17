@@ -216,7 +216,7 @@ class Database:
             if date_start:
                 df = df[df["date"] >= pd.to_datetime(date_start)]
             if date_end:
-                df = df[df["date"] <= pd.to_datetime(date_end)]
+                df = df[df["date"] <= pd.to_datetime(date_end) + pd.Timedelta(days=1)]
 
             if starter_choice == "1":
                 df = df[df["player_who_starts"] == 1]
