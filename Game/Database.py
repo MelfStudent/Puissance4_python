@@ -31,7 +31,7 @@ class Database:
             return 1
 
     @staticmethod
-    def save_new_game(player_who_starts:int, winner:int, shots_played_player:int, shots_played_ia:int, shots):
+    def save_new_game(player_who_starts: int, winner: int, shots_played_player: int, shots_played_ia: int, shots):
         """Saves a game to the game_data.csv file
 
         Appends a new game record to 'Data/game_data.csv' with the following details:
@@ -51,10 +51,10 @@ class Database:
             shots (list): List containing the positions of the moves played in the order of the game.
         """
         current_date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        get_next_id = Database.get_next_id()
+        next_id = Database.get_next_id()
 
         new_game_data = {
-            "id": [get_next_id],
+            "id": [next_id],
             "date": [current_date],
             "player_who_starts": [player_who_starts],
             "winner": [winner],
@@ -88,7 +88,7 @@ class Database:
         try:
             df = pd.read_csv('data/game_data.csv')
             Database._validate_columns(df)
-            for index, row in df.iterrows():
+            for _, row in df.iterrows():
                 winner = row['winner']
                 shots = eval(row['shots']) # Convert string representation of list to actual list
 
@@ -116,8 +116,8 @@ class Database:
     def _validate_columns(df):
         """Validates that the DataFrame contains the required columns
         """
-        required_columns = {"id", "date", "player_who_starts", "winner", "shots_played_player", "shots_played_ia", "shots"}
-        if not required_columns.issubset(df.columns):
+        REQUIRED_COLUMNS = {"id", "date", "player_who_starts", "winner", "shots_played_player", "shots_played_ia", "shots"}
+        if not REQUIRED_COLUMNS.issubset(df.columns):
             raise ValueError("CSV file does not contain the required columns.")
 
     @staticmethod

@@ -50,9 +50,9 @@ class Plateau:
     def display_plateau(self):
         """Displays the board in the console as a grid with colored tokens
         """
-        player_color = "\033[93m●\033[0m"
-        ia_color = "\033[91m●\033[0m"
-        empty_color = "\033[97m○\033[0m"
+        PLAYER_COLOR = "\033[93m●\033[0m"
+        IA_COLOR = "\033[91m●\033[0m"
+        EMPTY_COLOR = "\033[97m○\033[0m"
 
         print("\n  1 2 3 4 5 6 7")
         print(" ---------------")
@@ -61,11 +61,11 @@ class Plateau:
             print("|", end=" ")
             for cell in row:
                 if cell == 1:
-                    print(player_color, end=" ")
+                    print(PLAYER_COLOR, end=" ")
                 elif cell == -1:
-                    print(ia_color, end=" ")
+                    print(IA_COLOR, end=" ")
                 else:
-                    print(empty_color, end=" ")
+                    print(EMPTY_COLOR, end=" ")
             print("|")
 
         print(" ---------------\n")
@@ -85,10 +85,7 @@ class Plateau:
     def switch_player(self):
         """Toggles the player's hint to play based on the previous player
         """
-        if self.current_player == 1:
-            self.current_player = -1
-        else:
-            self.current_player = 1
+        self.current_player = -1 if self.current_player == 1 else 1
 
     def check_win(self):
         """Checks if there is a winner or the game is a draw and updates the game state accordingly.
