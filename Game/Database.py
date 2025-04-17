@@ -1,5 +1,3 @@
-import ast
-import csv
 import datetime
 import os
 
@@ -7,9 +5,8 @@ import pandas as pd
 
 from Game.Utils import Utils
 
-
 class Database:
-    """Class for managing game data storage and retrieval.
+    """Class for managing game data storage and retrieval
 
     This class provides methods to save game data to a CSV file and retrieve
     the next game ID for new entries.
@@ -32,7 +29,7 @@ class Database:
 
     @staticmethod
     def save_new_game(player_who_starts:int, winner:int, shots_played_player:int, shots_played_ia:int, shots):
-        """Saves a game to the game_data.csv file.
+        """Saves a game to the game_data.csv file
 
         Appends a new game record to 'Data/game_data.csv' with the following details:
         - Game ID
@@ -72,7 +69,7 @@ class Database:
 
     @staticmethod
     def evaluate_moves_from_history(current_shots, player_turn):
-        """Evaluates moves based on historical game data.
+        """Evaluates moves based on historical game data
 
         Args:
             current_shots (list): The list of shots played in the current game.
@@ -111,6 +108,12 @@ class Database:
 
     @staticmethod
     def export_dataframe(df: pd.DataFrame, filename: str = "exported_game_data.csv"):
+        """Exports a DataFrame to a CSV file
+
+        Args:
+            df (pd.DataFrame): The DataFrame to export.
+            filename (str): The name of the file to export to. Defaults to "exported_game_data.csv".
+        """
         if df is None or df.empty:
             print("No data to export.")
             return
@@ -137,6 +140,14 @@ class Database:
 
     @staticmethod
     def select_columns(df: pd.DataFrame) -> pd.DataFrame:
+        """Selects specific columns from a DataFrame
+
+        Args:
+            df (pd.DataFrame): The DataFrame from which to select columns.
+
+        Returns:
+            pd.DataFrame: A DataFrame containing only the selected columns.
+        """
         print("\nChoose columns to include (comma-separated):")
         for idx, col in enumerate(df.columns, 1):
             print(f"{idx}. {col}")
@@ -155,6 +166,11 @@ class Database:
 
     @staticmethod
     def filter_game_data():
+        """Filters game data based on user-defined criteria.
+
+        Returns:
+            pd.DataFrame: The filtered DataFrame.
+        """
         print("\n-- Apply Filters --")
 
         date_start = input("Start date (YYYY-MM-DD) or press Enter to skip: ").strip()
@@ -198,6 +214,14 @@ class Database:
 
     @staticmethod
     def sort_game_data(df: pd.DataFrame) -> pd.DataFrame:
+        """Sorts the game data based on user-defined criteria
+
+        Args:
+            df (pd.DataFrame): The DataFrame to sort.
+
+        Returns:
+            pd.DataFrame: The sorted DataFrame.
+        """
         print("\nDo you want to sort the data?")
         print("1. Yes")
         print("2. No")
@@ -238,6 +262,8 @@ class Database:
 
     @staticmethod
     def delete_filtered_data():
+        """Deletes filtered game data
+        """
         df = Database.apply_filters()
         if Database.display_data_to_delete(df):
             confirm = input("\nAre you sure you want to delete these records? (yes/no): ").strip().lower()
@@ -248,6 +274,11 @@ class Database:
 
     @staticmethod
     def delete_and_update_indices(df):
+        """Deletes specified records and updates the indices in the CSV file
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the records to delete.
+        """
         original_df = pd.read_csv("data/game_data.csv")
         original_df = original_df[~original_df.index.isin(df.index)]
 
@@ -259,6 +290,14 @@ class Database:
 
     @staticmethod
     def display_data_to_delete(df):
+        """Displays the data to be deleted and confirms the deletion
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the data to be deleted.
+
+        Returns:
+            bool: True if the data matches the filters and the user confirms the deletion, False otherwise.
+        """
         if df is None or df.empty:
             print("No data matches the filters. Nothing to delete.")
             return False
@@ -269,6 +308,11 @@ class Database:
 
     @staticmethod
     def apply_filters():
+        """Applies filters to the game data for deletion.
+
+        Returns:
+            pd.DataFrame: The filtered DataFrame.
+        """
         print("\n-- Apply Filters to Delete Data --")
 
         date_start = input("Start date (YYYY-MM-DD) or press Enter to skip: ").strip()
