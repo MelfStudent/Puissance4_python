@@ -1,12 +1,12 @@
 class Player:
-    """Class representing the human player.
+    """Class representing the human player
 
     This class provides a method for the human player to choose a column
     to place their token on the game board.
     """
     @staticmethod
     def player_choice(plateau):
-        """Asks the player to choose a column to place their token in, then adds the token to the game board.
+        """Asks the player to choose a column to place their token in, then adds the token to the game board
 
         Prompts the player to enter a column number between 1 and 7. If the column is valid and not full,
         the player's token is placed in the lowest available row of the chosen column.

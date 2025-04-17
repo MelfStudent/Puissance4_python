@@ -17,13 +17,14 @@ from Game.Player import Player
 from Game.Utils import Utils
 
 class Plateau:
-    """Class representing the game board.
+    """Class representing the game board
 
     This class manages the game state, including the board, current player,
     and game logic such as checking for wins and switching players.
     """
     def __init__(self):
-        """Initializes the game board and game state."""
+        """Initializes the game board and game state
+        """
         self.shots = None
         self.winner = None
         self.shots_played_ia = None
@@ -46,9 +47,9 @@ class Plateau:
         self.winner = 0
         self.shots = []
 
-    """Displays the board in the console as a grid with colored tokens
-    """
     def display_plateau(self):
+        """Displays the board in the console as a grid with colored tokens
+        """
         player_color = "\033[93m●\033[0m"
         ia_color = "\033[91m●\033[0m"
         empty_color = "\033[97m○\033[0m"
@@ -69,9 +70,9 @@ class Plateau:
 
         print(" ---------------\n")
 
-    """Displays the player or AI index depending on who is playing, and calls their game function
-    """
     def player_action(self):
+        """Displays the player or AI index depending on who is playing, and calls their game function
+        """
         current_player_str = "Player" if self.current_player == 1 else "IA"
         print(f"{current_player_str} turn!")
 
@@ -81,17 +82,17 @@ class Plateau:
         elif self.current_player == -1:
             IA.ia_choice(self)
 
-    """Toggles the player's hint to play based on the previous player
-    """
     def switch_player(self):
+        """Toggles the player's hint to play based on the previous player
+        """
         if self.current_player == 1:
             self.current_player = -1
         else:
             self.current_player = 1
 
-    """Checks if there is a winner or the game is a draw and updates the game state accordingly.
-    """
     def check_win(self):
+        """Checks if there is a winner or the game is a draw and updates the game state accordingly.
+        """
         if Utils.get_player_to_win(self.plateau) == 1:
             self.game_over = True
             self.display_plateau()
@@ -109,14 +110,14 @@ class Plateau:
             self.display_plateau()
             print("The game is a draw because the board is full!")
 
-    """Calls the save_new_game method of the Database class to save the current game state to a CSV file
-    """
     def save_game(self):
+        """Calls the save_new_game method of the Database class to save the current game state to a CSV file
+        """
         Database.save_new_game(self.player_who_starts, self.winner, self.shots_played_player, self.shots_played_ia, self.shots)
 
-    """Prompts the user to choose who starts the game between human, AI, or random
-    """
     def player_choice_who_starts(self):
+        """Prompts the user to choose who starts the game between human, AI, or random
+        """
         print("Player who starts!")
         print("1. You")
         print("2. IA")
@@ -144,7 +145,7 @@ class Plateau:
 
     @staticmethod
     def show_graphics():
-        """Displays all the graphics.
+        """Displays all the graphics
         """
         Graphics.plot_overview()
         Graphics.plot_frequency_moves()
@@ -160,6 +161,8 @@ class Plateau:
 
     @staticmethod
     def handle_export():
+        """Exports all game data to a CSV file
+        """
         try:
             df = pd.read_csv("data/game_data.csv")
         except FileNotFoundError:
@@ -174,6 +177,8 @@ class Plateau:
 
     @staticmethod
     def handle_filtered_export():
+        """Exports filtered game data to a CSV file
+        """
         df = Database.filter_game_data()
         if df is None or df.empty:
             print("\nNo filtered data to export.")
@@ -190,6 +195,8 @@ class Plateau:
 
     @staticmethod
     def show_all_data_terminal():
+        """Displays all game data in the terminal
+        """
         try:
             df = pd.read_csv("data/game_data.csv")
             if df.empty:
@@ -202,6 +209,8 @@ class Plateau:
 
     @staticmethod
     def show_filtered_data_terminal():
+        """Displays filtered game data in the terminal
+        """
         df = Database.filter_game_data()
         if df is None:
             return
@@ -217,6 +226,14 @@ class Plateau:
 
     @staticmethod
     def prepare_data(df):
+        """Prepares the data for statistical analysis.
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the game data.
+
+        Returns:
+            pd.DataFrame: The DataFrame with additional columns for analysis.
+        """
         df["starter_wins"] = df["player_who_starts"] == df["winner"]
         df["total_shots"] = df["shots_played_player"] + df["shots_played_ia"]
         df["date"] = pd.to_datetime(df["date"])
@@ -226,6 +243,19 @@ class Plateau:
 
     @staticmethod
     def compute_statistics(df):
+        """Computes various statistics from the game data.
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the game data.
+
+        Returns:
+            tuple: A tuple containing the following statistics:
+                - win_counts (pd.Series): The count of wins for each winner.
+                - win_percentages (pd.Series): The percentage of wins for each winner.
+                - starter_win_rate (float): The win rate of the starting player.
+                - avg_shots (float): The average number of shots per game.
+                - all_coords (list): A list of all coordinates played in the games.
+        """
         win_counts = df["winner_str"].value_counts()
         win_percentages = (win_counts / len(df) * 100).round(2)
         starter_win_rate = df["starter_wins"].mean() * 100
@@ -243,6 +273,14 @@ class Plateau:
 
     @staticmethod
     def statistical_analysis(mode="graphic"):
+        """Performs statistical analysis and displays the results in the specified mode
+
+        This method reads the game data from 'data/game_data.csv', prepares it for analysis, computes various statistics,
+        and then displays the results either in the terminal or as a graphical dashboard based on the specified mode.
+
+        Args:
+            mode (str): The mode in which to display the analysis results. Can be "graphic" or "terminal".
+        """
         try:
             df = pd.read_csv("data/game_data.csv")
         except FileNotFoundError:
@@ -263,6 +301,19 @@ class Plateau:
 
     @staticmethod
     def display_terminal_report(df, win_counts, win_percentages, starter_win_rate, avg_shots, all_coords):
+        """Displays the statistical report in the terminal
+
+        This method prints a summary of the game statistics to the terminal, including the total number of games,
+        win counts and percentages, starter win rate, average number of moves per game, and the most played columns.
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the game data.
+            win_counts (pd.Series): The count of wins for each winner.
+            win_percentages (pd.Series): The percentage of wins for each winner.
+            starter_win_rate (float): The win rate of the starting player.
+            avg_shots (float): The average number of shots per game.
+            all_coords (list): A list of all coordinates played in the games.
+        """
         print("\n=== Game Statistics Report ===")
         print(f"\nTotal games: {len(df)}")
         print("\n--- Win Counts ---")
@@ -283,6 +334,20 @@ class Plateau:
 
     @staticmethod
     def display_graphical_dashboard(df, win_counts, win_percentages, starter_win_rate, avg_shots, all_coords):
+        """Displays the statistical report as a graphical dashboard
+
+        This method creates a graphical dashboard with various plots to visualize the game statistics, including
+        the number of wins, player win rate over time, number of moves per winner, distribution of total moves,
+        most played columns, and a summary text.
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the game data.
+            win_counts (pd.Series): The count of wins for each winner.
+            win_percentages (pd.Series): The percentage of wins for each winner.
+            starter_win_rate (float): The win rate of the starting player.
+            avg_shots (float): The average number of shots per game.
+            all_coords (list): A list of all coordinates played in the games.
+        """
         fig = plt.figure(constrained_layout=True, figsize=(16, 10))
         spec = gridspec.GridSpec(ncols=3, nrows=2, figure=fig)
 
@@ -338,6 +403,8 @@ class Plateau:
 
     @staticmethod
     def generate_pdf_report():
+        """Generates a PDF report of the game statistics
+        """
         df = Plateau.load_data()
         if df is None:
             print("No game data found.")
@@ -358,6 +425,11 @@ class Plateau:
 
     @staticmethod
     def load_data():
+        """Loads game data from the CSV file
+
+        Returns:
+            pd.DataFrame: A DataFrame containing the game data.
+        """
         try:
             return pd.read_csv("data/game_data.csv")
         except FileNotFoundError:
@@ -365,6 +437,19 @@ class Plateau:
 
     @staticmethod
     def compute_all_stats(df):
+        """Computes all necessary statistics for the game data
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the game data.
+
+        Returns:
+            dict: A dictionary containing the following statistics:
+                - win_counts (pd.Series): The count of wins for each winner.
+                - win_percentages (pd.Series): The percentage of wins for each winner.
+                - starter_win_rate (float): The win rate of the starting player.
+                - avg_shots (float): The average number of shots per game.
+                - all_coords (list): A list of all coordinates played in the games.
+        """
         df = Plateau.prepare_data(df)
         win_counts, win_percentages, starter_win_rate, avg_shots, all_coords = Plateau.compute_statistics(df)
         return {
@@ -377,6 +462,11 @@ class Plateau:
 
     @staticmethod
     def get_report_filepath():
+        """Gets the file path for the PDF report
+
+        Returns:
+            str: The file path for the PDF report.
+        """
         base_name = input("Enter report name (without .pdf): ").strip() or "game_analysis_report"
         downloads_path = str(Path.home() / "Downloads")
         counter = 1
@@ -392,6 +482,11 @@ class Plateau:
 
     @staticmethod
     def create_fig_with_axes():
+        """Creates a figure with subplots
+
+       Returns:
+           tuple: A tuple containing the figure and a list of axes.
+       """
         fig = plt.figure(constrained_layout=True, figsize=(16, 10))
         spec = gridspec.GridSpec(ncols=3, nrows=2, figure=fig)
         axes = [fig.add_subplot(spec[i, j]) for i in range(2) for j in range(3)]
@@ -399,6 +494,13 @@ class Plateau:
 
     @staticmethod
     def plot_all_charts(df, stats, axes):
+        """Plots all charts for the PDF report
+
+        Args:
+            df (pd.DataFrame): The DataFrame containing the game data.
+            stats (dict): A dictionary containing the computed statistics.
+            axes (list): A list of axes for plotting the charts.
+        """
         win_counts = stats["win_counts"]
         all_coords = stats["all_coords"]
 
@@ -438,6 +540,13 @@ class Plateau:
 
     @staticmethod
     def add_summary_text(ax, df, stats):
+        """Adds summary text to the PDF report
+
+        Args:
+            ax (matplotlib.axes.Axes): The axes to add the summary text to.
+            df (pd.DataFrame): The DataFrame containing the game data.
+            stats (dict): A dictionary containing the computed statistics.
+        """
         ax.axis("off")
         wc, wp = stats["win_counts"], stats["win_percentages"]
         text = (
@@ -520,9 +629,9 @@ class Plateau:
             else:
                 print("Invalid choice. Please try again.")
 
-    """Starts the game by initializing the starting player and managing the game loop until the game ends.
-    """
     def start_game(self):
+        """Starts the game by initializing the starting player and managing the game loop until the game ends
+        """
         self.reset_game()
         self.player_choice_who_starts()
 

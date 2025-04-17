@@ -1,13 +1,13 @@
 import matplotlib.pyplot as plt
 import pandas as pd
-import numpy as np
 
 class Graphics:
-    """Class for generating various graphs based on game data."""
+    """Class for generating various graphs based on game data
+    """
 
     @staticmethod
     def load_game_data():
-        """Loads game data from the CSV file.
+        """Loads game data from the CSV file
 
         Returns:
             pd.DataFrame: A DataFrame containing the game data.
@@ -20,7 +20,8 @@ class Graphics:
 
     @staticmethod
     def plot_overview():
-        """Plot an overview of the game results."""
+        """Plot an overview of the game results
+        """
         df = Graphics.load_game_data()
         if df.empty:
             return
@@ -43,7 +44,8 @@ class Graphics:
 
     @staticmethod
     def plot_frequency_moves():
-        """Plot the frequency of moves per game."""
+        """Plot the frequency of moves per game
+        """
         df = Graphics.load_game_data()
         if df.empty:
             return
@@ -59,7 +61,8 @@ class Graphics:
 
     @staticmethod
     def plot_trend_dispersion():
-        """Plot trend and dispersion measures."""
+        """Plot trend and dispersion measures
+        """
         df = Graphics.load_game_data()
         if df.empty:
             return

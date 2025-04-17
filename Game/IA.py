@@ -6,7 +6,7 @@ from Game.Database import Database
 from Game.Utils import Utils
 
 class IA:
-    """Class representing the artificial intelligence.
+    """Class representing the artificial intelligence
 
     This class contains static methods to manage the AI's choices, generate possible moves,
     evaluate moves, and count alignments.
@@ -14,7 +14,7 @@ class IA:
 
     @staticmethod
     def ia_choice(plateau):
-        """Manages the AI's choice by selecting the best possible move.
+        """Manages the AI's choice by selecting the best possible move
 
         The AI simulates thinking with a random delay, generates possible moves,
         evaluates them, and plays the move with the highest score.
@@ -41,7 +41,7 @@ class IA:
 
     @staticmethod
     def generate_possible_moves(plateau):
-        """Generates a dictionary of possible moves on the board.
+        """Generates a dictionary of possible moves on the board
 
         The keys are the positions (row, column) and the values are initialized to 0.
 
@@ -61,7 +61,7 @@ class IA:
 
     @staticmethod
     def evaluate_moves(plateau_obj, moves):
-        """Evaluates each possible move by simulating the move on the board.
+        """Evaluates each possible move by simulating the move on the board
 
         Assigns scores based on the possibility of winning, blocking the opponent,
         and the alignment of tokens.
@@ -119,7 +119,7 @@ class IA:
 
     @staticmethod
     def count_alignment(board, row, col, player):
-        """Counts the number of aligned tokens in all directions.
+        """Counts the number of aligned tokens in all directions
 
         Counts horizontal, vertical, and diagonal alignments for a given player
         from a specific position.

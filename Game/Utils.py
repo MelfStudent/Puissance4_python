@@ -1,14 +1,13 @@
 import json
 
-
 class Utils:
-    """Utility class.
+    """Utility class
 
     This class contains static methods to check the game board for winning conditions.
     """
     @staticmethod
     def get_player_to_win(plateau):
-        """Checks the game board for a winning condition.
+        """Checks the game board for a winning condition
 
         Iterates through the game board to check for any winning conditions.
         A player wins if they have four consecutive tokens in a row horizontally,
@@ -46,6 +45,7 @@ class Utils:
 
     @staticmethod
     def load_points_config():
-        """Load the points configuration from a JSON file."""
+        """Load the points configuration from a JSON file
+        """
         with open('config/points_config.json', 'r') as json_file:
             return json.load(json_file)
