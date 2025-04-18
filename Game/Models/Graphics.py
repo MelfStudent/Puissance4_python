@@ -34,6 +34,7 @@ class Graphics:
         ax.pie(sizes, explode=explode, labels=labels, colors=colors, autopct='%1.1f%%', shadow=True, startangle=140)
         ax.axis('equal')
         ax.set_title('Overview of Game Results')
+        plt.show()
 
     @staticmethod
     def plot_trend_dispersion(ax=None):
@@ -59,6 +60,7 @@ class Graphics:
         ax.set_xlabel('Number of Moves')
         ax.set_title('Trend and Dispersion Measures')
         ax.legend()
+        plt.show()
 
     @staticmethod
     def plot_wins_by_first_player(ax=None):
@@ -86,6 +88,7 @@ class Graphics:
         ax.set_ylabel('Number of victories')
         ax.set_title('Victories depending on who starts')
         ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+        plt.show()
 
     @staticmethod
     def plot_column_play_counts(ax=None):
@@ -123,6 +126,7 @@ class Graphics:
         ax.set_title('Frequency of play per column (all moves)')
         ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
+        plt.show()
 
     @staticmethod
     def plot_games_per_month(ax=None):
@@ -154,6 +158,7 @@ class Graphics:
         ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         plt.xticks(rotation=45)
         plt.tight_layout()
+        plt.show()
 
     @staticmethod
     def plot_shots_frequency_per_game(ax=None):
@@ -182,3 +187,4 @@ class Graphics:
         ax.xaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         ax.yaxis.set_major_locator(ticker.MaxNLocator(integer=True))
         plt.tight_layout()
+        plt.show()
